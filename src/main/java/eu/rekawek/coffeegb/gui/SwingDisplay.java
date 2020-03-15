@@ -5,7 +5,6 @@ import eu.rekawek.coffeegb.gpu.Display;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SwingDisplay extends JPanel implements Display, Runnable {
 

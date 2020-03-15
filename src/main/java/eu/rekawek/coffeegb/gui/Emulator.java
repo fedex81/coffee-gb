@@ -27,9 +27,9 @@ public class Emulator {
 
     private final Cartridge rom;
 
-    private final AudioSystemSoundOutput sound;
+    private final SoundOutput sound;
 
-    private final SwingDisplay display;
+    private final Display display;
 
     private final SwingController controller;
 
@@ -43,7 +43,7 @@ public class Emulator {
 
     private JFrame mainWindow;
 
-    public Emulator(String[] args, Properties properties) throws IOException {
+    public Emulator(String[] args, Properties properties, Display disp, SoundOutput soundOutput) throws IOException {
         options = parseArgs(args);
         rom = new Cartridge(options);
         speedMode = new SpeedMode();
@@ -57,12 +57,17 @@ public class Emulator {
             controller = null;
             gameboy = new Gameboy(options, rom, Display.NULL_DISPLAY, Controller.NULL_CONTROLLER, SoundOutput.NULL_OUTPUT, serialEndpoint, console);
         } else {
-            sound = new AudioSystemSoundOutput();
-            display = new SwingDisplay(SCALE);
+            sound = soundOutput == null ? new AudioSystemSoundOutput() : soundOutput;
             controller = new SwingController(properties);
+            display = disp == null ? new SwingDisplay(SCALE) : disp;
+            display.addKeyListener(controller);
             gameboy = new Gameboy(options, rom, display, controller, sound, serialEndpoint, console);
         }
         console.ifPresent(c -> c.init(gameboy));
+    }
+
+    public Emulator(String[] args, Properties properties) throws IOException {
+        this(args, properties, null, null);
     }
 
     private static GameboyOptions parseArgs(String[] args) {
@@ -116,21 +121,33 @@ public class Emulator {
         }
     }
 
-    private void startGui() {
-        display.setPreferredSize(new Dimension(160 * SCALE, 144 * SCALE));
+    public void runOnCurrentThread() {
+        gameboy.run();
+    }
 
+    public void stop(){
+        gameboy.stop();
+    }
+
+    private void startGui() {
+        Optional<SwingDisplay> swingDisplay = Optional.empty();
+        if(display instanceof SwingDisplay){
+            swingDisplay = Optional.of((SwingDisplay) display);
+        }
+
+        swingDisplay.ifPresent(d -> d.setPreferredSize(new Dimension(160 * SCALE, 144 * SCALE)));
         mainWindow = new JFrame("Coffee GB: " + rom.getTitle());
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.setLocationRelativeTo(null);
 
-        mainWindow.setContentPane(display);
+        swingDisplay.ifPresent(mainWindow::setContentPane);
         mainWindow.setResizable(false);
         mainWindow.setVisible(true);
         mainWindow.pack();
 
         mainWindow.addKeyListener(controller);
 
-        new Thread(display).start();
+        swingDisplay.ifPresent(d -> new Thread(d).start());
         new Thread(gameboy).start();
     }
 

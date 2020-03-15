@@ -15,11 +15,11 @@ public class AudioSystemSoundOutput implements SoundOutput {
 
     private static final Logger LOG = LoggerFactory.getLogger(AudioSystemSoundOutput.class);
 
-    private static final int SAMPLE_RATE = 22050;
+    private static final int SAMPLE_RATE = 44100;
 
     private static final int BUFFER_SIZE = 1024;
 
-    private static final AudioFormat FORMAT = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, SAMPLE_RATE, 8, 2, 2, SAMPLE_RATE, false);
+    private static final AudioFormat FORMAT = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, SAMPLE_RATE, 16, 1, 2, SAMPLE_RATE, false);
 
     private SourceDataLine line;
 
@@ -72,9 +72,13 @@ public class AudioSystemSoundOutput implements SoundOutput {
         Preconditions.checkArgument(right >= 0);
         Preconditions.checkArgument(right < 256);
 
-        buffer[i++] = (byte) (left);
-        buffer[i++] = (byte) (right);
-        if (i > BUFFER_SIZE / 2) {
+        int mono8 = ((left + right) >> 1) + Byte.MIN_VALUE; //signed
+        int mono16 = mono8 << 8;
+
+        buffer[i++] = (byte) (mono16 & 0xFF); //lsb
+        buffer[i++] = (byte) ((mono16 >> 8) & 0xFF); //msb
+
+        if (i > BUFFER_SIZE/2) {
             line.write(buffer, 0, i);
             i = 0;
         }

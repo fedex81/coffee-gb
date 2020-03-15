@@ -1,5 +1,7 @@
 package eu.rekawek.coffeegb.gpu;
 
+import java.awt.event.KeyListener;
+
 public interface Display {
 
     void putDmgPixel(int color);
@@ -13,6 +15,14 @@ public interface Display {
     void enableLcd();
 
     void disableLcd();
+
+    default void addKeyListener(KeyListener listener){
+
+    }
+
+    default void stop(){
+
+    }
 
     Display NULL_DISPLAY = new Display() {
 
@@ -38,6 +48,11 @@ public interface Display {
 
         @Override
         public void disableLcd() {
+        }
+
+        @Override
+        public void addKeyListener(KeyListener listener) {
+
         }
     };
 

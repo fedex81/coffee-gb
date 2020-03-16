@@ -6,7 +6,7 @@ import eu.rekawek.coffeegb.cpu.Cpu;
 import eu.rekawek.coffeegb.cpu.InterruptManager;
 import eu.rekawek.coffeegb.cpu.Registers;
 import eu.rekawek.coffeegb.cpu.SpeedMode;
-import eu.rekawek.coffeegb.debug.Console;
+import eu.rekawek.coffeegb.debug.IConsole;
 import eu.rekawek.coffeegb.gpu.Display;
 import eu.rekawek.coffeegb.gpu.Gpu;
 import eu.rekawek.coffeegb.memory.Dma;
@@ -55,7 +55,7 @@ public class Gameboy implements Runnable {
 
     private final SpeedMode speedMode;
 
-    private final Optional<Console> console;
+    private final Optional<IConsole> console;
 
     private volatile boolean doStop;
 
@@ -65,7 +65,7 @@ public class Gameboy implements Runnable {
         this(options, rom, display, controller, soundOutput, serialEndpoint, Optional.empty());
     }
 
-    public Gameboy(GameboyOptions options, Cartridge rom, Display display, Controller controller, SoundOutput soundOutput, SerialEndpoint serialEndpoint, Optional<Console> console) {
+    public Gameboy(GameboyOptions options, Cartridge rom, Display display, Controller controller, SoundOutput soundOutput, SerialEndpoint serialEndpoint, Optional<IConsole> console) {
         this.display = display;
         gbc = rom.isGbc();
         speedMode = new SpeedMode();
@@ -151,7 +151,7 @@ public class Gameboy implements Runnable {
                 requestedScreenRefresh = false;
                 display.waitForRefresh();
             }
-            console.ifPresent(Console::tick);
+            console.ifPresent(IConsole::tick);
             tickListeners.forEach(Runnable::run);
         }
     }

@@ -1,6 +1,6 @@
 package eu.rekawek.coffeegb.memory.cart.battery;
 
-import org.apache.commons.io.IOUtils;
+import com.google.common.io.ByteStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +64,7 @@ public class FileBattery implements Battery {
 
     private void loadClock(long[] clockData, InputStream is) throws IOException {
         byte[] byteBuff = new byte[4 * clockData.length];
-        IOUtils.read(is, byteBuff);
+        ByteStreams.readFully(is, byteBuff);
         ByteBuffer buff = ByteBuffer.wrap(byteBuff);
         buff.order(ByteOrder.LITTLE_ENDIAN);
         int i = 0;
@@ -80,12 +80,12 @@ public class FileBattery implements Battery {
         for (long d : clockData) {
             buff.putInt((int) d);
         }
-        IOUtils.write(byteBuff, os);
+        os.write(byteBuff);
     }
 
     private void loadRam(int[] ram, InputStream is, long length) throws IOException {
         byte[] buffer = new byte[ram.length];
-        IOUtils.read(is, buffer, 0, Math.min((int) length, ram.length));
+        ByteStreams.read(is, buffer, 0, Math.min((int) length, ram.length));
         for (int i = 0; i < ram.length; i++) {
             ram[i] = buffer[i] & 0xff;
         }
@@ -96,6 +96,6 @@ public class FileBattery implements Battery {
         for (int i = 0; i < ram.length; i++) {
             buffer[i] = (byte) (ram[i]);
         }
-        IOUtils.write(buffer, os);
+        os.write(buffer);
     }
 }

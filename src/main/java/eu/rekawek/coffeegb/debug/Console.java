@@ -22,7 +22,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-public class Console implements Runnable {
+public class Console implements IConsole {
 
     private static final Logger LOG = LoggerFactory.getLogger(Console.class);
 
@@ -33,6 +33,11 @@ public class Console implements Runnable {
     private volatile boolean isStarted;
 
     private List<Command> commands;
+
+    public static interface IConsole extends Runnable {
+        void init(Gameboy gameboy);
+        void tick();
+    }
 
     public Console() {
     }

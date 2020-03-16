@@ -52,7 +52,6 @@ public class SwingController implements Controller, KeyListener {
     }
 
     private EnumMap<Button, Integer> parseMappings(EnumMap<Button, Integer> buttonToKey, Properties properties){
-        LOG.info("parseMappings");
         for (String k : properties.stringPropertyNames()) {
             String v = properties.getProperty(k);
             if (k.startsWith("btn_") && v.startsWith("VK_")) {
@@ -84,9 +83,9 @@ public class SwingController implements Controller, KeyListener {
                         int v = Integer.valueOf(entry.getValue().toString());
                         Button button = Button.valueOf(k.substring(4).toUpperCase());
                         buttonToKey.put(button, v);
-//                        LOG.debug("{} -> {}", k, v);
+                        LOG.debug("{} -> {}", k, v);
                     } catch (Exception e) {
-//                        LOG.info("Ignoring button {}", k);
+                        LOG.debug("Ignoring button {}", k);
                     }
                 }
             }

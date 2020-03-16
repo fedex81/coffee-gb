@@ -1,5 +1,7 @@
 package eu.rekawek.coffeegb.memory.cart;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import eu.rekawek.coffeegb.AddressSpace;
 import eu.rekawek.coffeegb.GameboyOptions;
 import eu.rekawek.coffeegb.memory.BootRom;
@@ -10,11 +12,10 @@ import eu.rekawek.coffeegb.memory.cart.type.Mbc2;
 import eu.rekawek.coffeegb.memory.cart.type.Mbc3;
 import eu.rekawek.coffeegb.memory.cart.type.Mbc5;
 import eu.rekawek.coffeegb.memory.cart.type.Rom;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -68,7 +69,8 @@ public class Cartridge implements AddressSpace {
 
         Battery battery = Battery.NULL_BATTERY;
         if (type.isBattery() && options.isSupportBatterySaves()) {
-            battery = new FileBattery(file.getParentFile(), FilenameUtils.removeExtension(file.getName()));
+            battery = new FileBattery(file.getParentFile(),
+                    Files.getNameWithoutExtension(file.getName()));
         }
 
         if (type.isMbc1()) {
@@ -145,14 +147,14 @@ public class Cartridge implements AddressSpace {
     }
 
     private static int[] loadFile(File file) throws IOException {
-        String ext = FilenameUtils.getExtension(file.getName());
+        String ext = Files.getFileExtension(file.getName());
         try (InputStream is = new FileInputStream(file)) {
             if ("zip".equalsIgnoreCase(ext)) {
                 try (ZipInputStream zis = new ZipInputStream(is)) {
                     ZipEntry entry;
                     while ((entry = zis.getNextEntry()) != null) {
                         String name = entry.getName();
-                        String entryExt = FilenameUtils.getExtension(name);
+                        String entryExt = Files.getFileExtension(name);
                         if (Stream.of("gb", "gbc", "rom").anyMatch(e -> e.equalsIgnoreCase(entryExt))) {
                             return load(zis, (int) entry.getSize());
                         }
@@ -167,7 +169,7 @@ public class Cartridge implements AddressSpace {
     }
 
     private static int[] load(InputStream is, int length) throws IOException {
-        byte[] byteArray = IOUtils.toByteArray(is, length);
+        byte[] byteArray = ByteStreams.toByteArray(is);
         int[] intArray = new int[byteArray.length];
         for (int i = 0; i < byteArray.length; i++) {
             intArray[i] = byteArray[i] & 0xff;

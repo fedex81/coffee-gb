@@ -5,6 +5,7 @@ import eu.rekawek.coffeegb.GameboyOptions;
 import eu.rekawek.coffeegb.controller.Controller;
 import eu.rekawek.coffeegb.cpu.SpeedMode;
 import eu.rekawek.coffeegb.debug.Console;
+import eu.rekawek.coffeegb.debug.IConsole;
 import eu.rekawek.coffeegb.gpu.Display;
 import eu.rekawek.coffeegb.memory.cart.Cartridge;
 import eu.rekawek.coffeegb.serial.SerialEndpoint;
@@ -39,7 +40,7 @@ public class Emulator {
 
     private final Gameboy gameboy;
 
-    private final Optional<Console> console;
+    private final Optional<IConsole> console;
 
     private JFrame mainWindow;
 
@@ -48,7 +49,8 @@ public class Emulator {
         rom = new Cartridge(options);
         speedMode = new SpeedMode();
         serialEndpoint = SerialEndpoint.NULL_ENDPOINT;
-        console = options.isDebug() ? Optional.of(new Console()) : Optional.empty();
+        //do not map console as it requires the jline lib
+        console = Optional.empty();
         console.map(Thread::new).ifPresent(Thread::start);
 
         if (options.isHeadless()) {

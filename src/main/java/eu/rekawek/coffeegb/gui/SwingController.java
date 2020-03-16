@@ -21,10 +21,23 @@ public class SwingController implements Controller, KeyListener {
     private static final Logger LOG = LoggerFactory.getLogger(SwingController.class);
 
     private ButtonListener listener;
-
     private Map<Integer, Button> mapping;
 
-    public SwingController(Properties properties) {
+    public static SwingController createController(Properties properties){
+        SwingController sc = new SwingController();
+        EnumMap<Button, Integer> buttonToKey = sc.addDefaultMapping();
+        buttonToKey = sc.parseMappings(buttonToKey, properties);
+        return sc;
+    }
+
+    public static SwingController createIntController(Properties properties){
+        SwingController sc = new SwingController();
+        EnumMap<Button, Integer> buttonToKey = sc.addDefaultMapping();
+        buttonToKey = sc.parseMappings2(buttonToKey, properties);
+        return sc;
+    }
+
+    private EnumMap<Button, Integer> addDefaultMapping(){
         EnumMap<Button, Integer> buttonToKey = new EnumMap<>(Button.class);
 
         buttonToKey.put(Button.LEFT, KeyEvent.VK_LEFT);
@@ -35,7 +48,11 @@ public class SwingController implements Controller, KeyListener {
         buttonToKey.put(Button.B, KeyEvent.VK_X);
         buttonToKey.put(Button.START, KeyEvent.VK_ENTER);
         buttonToKey.put(Button.SELECT, KeyEvent.VK_BACK_SPACE);
+        return buttonToKey;
+    }
 
+    private EnumMap<Button, Integer> parseMappings(EnumMap<Button, Integer> buttonToKey, Properties properties){
+        LOG.info("parseMappings");
         for (String k : properties.stringPropertyNames()) {
             String v = properties.getProperty(k);
             if (k.startsWith("btn_") && v.startsWith("VK_")) {
@@ -52,10 +69,32 @@ public class SwingController implements Controller, KeyListener {
                 }
             }
         }
-
-        mapping = buttonToKey.entrySet()
+        this.mapping = buttonToKey.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        return buttonToKey;
+    }
+
+    private EnumMap<Button, Integer> parseMappings2(EnumMap<Button, Integer> buttonToKey, Properties properties){
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            if (entry.getKey() instanceof String) {
+                String k = String.valueOf(entry.getKey());
+                if (k.startsWith("btn_")) {
+                    try {
+                        int v = Integer.valueOf(entry.getValue().toString());
+                        Button button = Button.valueOf(k.substring(4).toUpperCase());
+                        buttonToKey.put(button, v);
+//                        LOG.debug("{} -> {}", k, v);
+                    } catch (Exception e) {
+//                        LOG.info("Ignoring button {}", k);
+                    }
+                }
+            }
+        }
+        this.mapping = buttonToKey.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        return buttonToKey;
     }
 
     @Override

@@ -57,9 +57,9 @@ public class Emulator {
             controller = null;
             gameboy = new Gameboy(options, rom, Display.NULL_DISPLAY, Controller.NULL_CONTROLLER, SoundOutput.NULL_OUTPUT, serialEndpoint, console);
         } else {
-            sound = soundOutput == null ? new AudioSystemSoundOutput() : soundOutput;
-            controller = new SwingController(properties);
-            display = disp == null ? new SwingDisplay(SCALE) : disp;
+            sound = soundOutput;
+            controller = SwingController.createIntController(properties);
+            display = disp;
             display.addKeyListener(controller);
             gameboy = new Gameboy(options, rom, display, controller, sound, serialEndpoint, console);
         }
@@ -67,7 +67,26 @@ public class Emulator {
     }
 
     public Emulator(String[] args, Properties properties) throws IOException {
-        this(args, properties, null, null);
+        options = parseArgs(args);
+        rom = new Cartridge(options);
+        speedMode = new SpeedMode();
+        serialEndpoint = SerialEndpoint.NULL_ENDPOINT;
+        console = options.isDebug() ? Optional.of(new Console()) : Optional.empty();
+        console.map(Thread::new).ifPresent(Thread::start);
+
+        if (options.isHeadless()) {
+            sound = null;
+            display = null;
+            controller = null;
+            gameboy = new Gameboy(options, rom, Display.NULL_DISPLAY, Controller.NULL_CONTROLLER, SoundOutput.NULL_OUTPUT, serialEndpoint, console);
+        } else {
+            sound = new AudioSystemSoundOutput();
+            controller = SwingController.createController(properties);
+            display = new SwingDisplay(SCALE);
+            display.addKeyListener(controller);
+            gameboy = new Gameboy(options, rom, display, controller, sound, serialEndpoint, console);
+        }
+        console.ifPresent(c -> c.init(gameboy));
     }
 
     private static GameboyOptions parseArgs(String[] args) {

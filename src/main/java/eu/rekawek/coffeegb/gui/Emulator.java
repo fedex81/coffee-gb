@@ -13,6 +13,7 @@ import eu.rekawek.coffeegb.sound.SoundOutput;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -44,7 +45,7 @@ public class Emulator {
 
     private JFrame mainWindow;
 
-    public Emulator(String[] args, Properties properties, Display disp, SoundOutput soundOutput) throws IOException {
+    public Emulator(String[] args, Display disp, SoundOutput soundOutput, SwingController controller) throws IOException {
         options = parseArgs(args);
         rom = new Cartridge(options);
         speedMode = new SpeedMode();
@@ -56,11 +57,11 @@ public class Emulator {
         if (options.isHeadless()) {
             sound = null;
             display = null;
-            controller = null;
+            this.controller = null;
             gameboy = new Gameboy(options, rom, Display.NULL_DISPLAY, Controller.NULL_CONTROLLER, SoundOutput.NULL_OUTPUT, serialEndpoint, console);
         } else {
             sound = soundOutput;
-            controller = SwingController.createIntController(properties);
+            this.controller = controller;
             display = disp;
             display.addKeyListener(controller);
             gameboy = new Gameboy(options, rom, display, controller, sound, serialEndpoint, console);

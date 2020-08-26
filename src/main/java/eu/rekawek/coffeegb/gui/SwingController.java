@@ -1,10 +1,10 @@
 package eu.rekawek.coffeegb.gui;
 
+import eu.rekawek.coffeegb.LoggerFactory;
 import eu.rekawek.coffeegb.controller.ButtonListener;
 import eu.rekawek.coffeegb.controller.ButtonListener.Button;
 import eu.rekawek.coffeegb.controller.Controller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

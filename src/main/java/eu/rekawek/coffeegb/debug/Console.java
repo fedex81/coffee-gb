@@ -1,6 +1,7 @@
 package eu.rekawek.coffeegb.debug;
 
 import eu.rekawek.coffeegb.Gameboy;
+import eu.rekawek.coffeegb.LoggerFactory;
 import eu.rekawek.coffeegb.debug.CommandPattern.ParsedCommandLine;
 import eu.rekawek.coffeegb.debug.command.Quit;
 import eu.rekawek.coffeegb.debug.command.ShowHelp;
@@ -8,11 +9,12 @@ import eu.rekawek.coffeegb.debug.command.apu.Channel;
 import eu.rekawek.coffeegb.debug.command.cpu.ShowOpcode;
 import eu.rekawek.coffeegb.debug.command.cpu.ShowOpcodes;
 import eu.rekawek.coffeegb.debug.command.ppu.ShowBackground;
+import eu.rekawek.coffeegb.serial.SerialPort;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

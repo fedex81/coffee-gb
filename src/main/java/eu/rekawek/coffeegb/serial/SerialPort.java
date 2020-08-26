@@ -2,10 +2,12 @@ package eu.rekawek.coffeegb.serial;
 
 import eu.rekawek.coffeegb.AddressSpace;
 import eu.rekawek.coffeegb.Gameboy;
+import eu.rekawek.coffeegb.LoggerFactory;
 import eu.rekawek.coffeegb.cpu.InterruptManager;
 import eu.rekawek.coffeegb.cpu.SpeedMode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import eu.rekawek.coffeegb.gui.AudioSystemSoundOutput;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 

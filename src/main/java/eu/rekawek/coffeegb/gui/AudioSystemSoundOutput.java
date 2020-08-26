@@ -2,9 +2,11 @@ package eu.rekawek.coffeegb.gui;
 
 import com.google.common.base.Preconditions;
 import eu.rekawek.coffeegb.Gameboy;
+import eu.rekawek.coffeegb.LoggerFactory;
+import eu.rekawek.coffeegb.memory.Mmu;
 import eu.rekawek.coffeegb.sound.SoundOutput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;

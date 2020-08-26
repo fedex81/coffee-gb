@@ -1,8 +1,8 @@
 package eu.rekawek.coffeegb.memory.cart.battery;
 
 import com.google.common.io.ByteStreams;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import eu.rekawek.coffeegb.LoggerFactory;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;

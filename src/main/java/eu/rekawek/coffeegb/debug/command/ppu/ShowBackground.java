@@ -2,6 +2,7 @@ package eu.rekawek.coffeegb.debug.command.ppu;
 
 import eu.rekawek.coffeegb.AddressSpace;
 import eu.rekawek.coffeegb.Gameboy;
+import eu.rekawek.coffeegb.LoggerFactory;
 import eu.rekawek.coffeegb.debug.Command;
 import eu.rekawek.coffeegb.debug.CommandPattern;
 import eu.rekawek.coffeegb.debug.CommandPattern.ParsedCommandLine;
@@ -11,8 +12,9 @@ import eu.rekawek.coffeegb.gpu.Lcdc;
 import eu.rekawek.coffeegb.gpu.TileAttributes;
 import eu.rekawek.coffeegb.gui.SwingDisplay;
 import eu.rekawek.coffeegb.memory.MemoryRegisters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import eu.rekawek.coffeegb.serial.SerialPort;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
